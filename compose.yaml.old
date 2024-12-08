@@ -1,0 +1,47 @@
+services:
+  product-prometheus:
+    image: prom/prometheus
+    container_name: product-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  ## Tempo
+  product-tempo:
+    image: grafana/tempo
+    container_name: product-tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+       - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+       - ./docker/tempo/tempo-data:/tmp/tempo
+    ports:
+       - "3200:3200" # Tempo
+       - "9411:9411" # zipkin
+  product-loki:
+    image: grafana/loki:main
+    container_name: product-loki
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+  product-grafana:
+    image: grafana/grafana
+    container_name: product-grafana
+    restart: unless-stopped
+    ports:
+       - "3000:3000"
+    volumes:
+       - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+       - GF_SECURITY_ADMIN_USER=admin
+       - GF_SECURITY_ADMIN_PASSWORD=123456
+  ##product observability app
+  product-observability:
+    build: ./
+    container_name: product-observability
+    depends_on:
+      - product-tempo
+      - product-loki
+    restart: always
+    ports:
+      - "8082:8082"
