@@ -4,6 +4,9 @@
 This project demonstrates how to implement observability in a Spring Boot application using modern tools for metrics, logs, and distributed tracing. The setup is containerized using Docker Compose for easy deployment and scalability.
 
 ---
+![observability Springboot](https://github.com/user-attachments/assets/9f148375-d03f-4435-8603-1fc54858084b)
+
+---
 
 ## 🛠️ Tech Stack & Tools  
 - **Spring Boot**: Backend application.  
